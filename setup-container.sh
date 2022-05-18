@@ -16,7 +16,8 @@ then
 	# notice that only verified versions of Docker may be installed
 	# verify the documentation to check if a more recent version is available
 
-	yum install -y docker-ce
+	yum install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
 	[ ! -d /etc/docker ] && mkdir /etc/docker
 
 	mkdir -p /etc/systemd/system/docker.service.d
@@ -34,8 +35,19 @@ then
 	    "overlay2.override_kernel_check=true"
 	  ]
 	}
+
 	EOF
 
+# Starting in version 1.24, I have been getting an error from kubeadm. The error is:
+# # kubeadm init --apiserver-advertise-address 192.168.56.110
+# [init] Using Kubernetes version: v1.24.0
+# [preflight] Running pre-flight checks
+# error execution phase preflight: [preflight] Some fatal errors occurred:
+#	[ERROR CRI]: container runtime is not running: output: time="2022-05-18T03:00:30Z" level=fatal msg="getting status of runtime: rpc error: code = Unimplemented desc = unknown service runtime.v1alpha2.RuntimeService"
+#, error: exit status 1
+# I looked at installing the docker Mirantis tooling and it seemed like a pain, so let's try containerd instead.
+# To use containerd, we need to install the yum packets above, and then make sure that 'cri' is not a disabled container runtime.
+	sed -i 's/disabled_plugins = \["cri"]/disabled_plugins = [""]/' /etc/containerd/config.toml
 
 	systemctl daemon-reload
 	systemctl restart docker
