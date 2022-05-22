@@ -1,4 +1,4 @@
-#!/bin/bash -el
+#!/bin/bash -elx
 # script that runs 
 # https://kubernetes.io/docs/setup/production-environment/container-runtimes
 

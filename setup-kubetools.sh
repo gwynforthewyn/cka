@@ -41,3 +41,5 @@ yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 systemctl enable --now kubelet
 
 sysctl --system
+
+echo 'export KUBECONFIG=/etc/kubernetes/admin.conf' >> /root/.bashrc
